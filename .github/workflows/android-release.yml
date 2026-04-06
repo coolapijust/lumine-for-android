@@ -33,6 +33,7 @@ jobs:
       ANDROID_BUILD_TOOLS: '36.0.0'
       ANDROID_NDK_VERSION: '30.0.14904198'
       RELEASE_APK_GLOB: android/app/build/outputs/apk/release/*.apk
+      HAS_ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -109,10 +110,10 @@ jobs:
             ./mobile
 
       - name: Prepare signing keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: env.HAS_ANDROID_KEYSTORE != ''
         shell: bash
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release-keystore.jks"
+          echo "$HAS_ANDROID_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/release-keystore.jks"
 
       - name: Build APKs
         shell: bash
